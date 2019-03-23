@@ -1,7 +1,8 @@
-import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core'
+import { Component, ElementRef, HostListener, Input, NgZone, OnInit, ViewChild } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Subject } from 'rxjs'
 import { fadeIn, fadeInOut } from '../animations'
+import { SocketService } from '../../_helpers/socket/socket.service'
 
 const randomMessages = [
   'Nice to meet you',
@@ -32,9 +33,13 @@ const getRandomMessage = () => randomMessages[rand(randomMessages.length)]
 export class ChatWidgetComponent implements OnInit {
 
   @ViewChild('bottom') bottom: ElementRef
+  public _item: number
+  @Input() public set item(item) { console.log('set item', item)
+    this._item = item
+    this.getMessages()
+  }
   @Input() public theme: 'blue' | 'grey' | 'red' = 'blue'
    // public visible: true | false = false
-
   public _visible = false
 
   public get visible() {
@@ -53,6 +58,7 @@ export class ChatWidgetComponent implements OnInit {
 
   public focus = new Subject()
 
+  public userid = Number(localStorage.user)
   public user = {
     name: 'Swaroop',
     status: 'online',
@@ -69,7 +75,7 @@ export class ChatWidgetComponent implements OnInit {
   public messages = []
 
   ngOnInit() {
-    setTimeout(() => this.visible = true, 1000)
+    // setTimeout(() => this.visible = true, 1000)
     // setTimeout(() => {
     //   this.addMessage(this.operator, 'Hi, how can we help you?', 'received')
     // }, 1500)
@@ -100,18 +106,40 @@ export class ChatWidgetComponent implements OnInit {
     this.addMessage(this.user, getRandomMessage(), 'received')
   }
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private socket: SocketService,
+              private zone: NgZone
+  ) {
   }
 
-  async getMessages() {
+  async getMessages() { console.log('getMessages5', this._item)
+    if (!this._item) {
+      return
+    }
+    const route = `/packages/${this._item}/comments`
     const messages: any = await this.http
-      .get('/packages/290/comments')
+      .get(route)
       .toPromise()
+    console.log('comments request completed')
+    this.messages = []
+
+    console.log('push completed calling sync')
+    this.socket.syncUpdates(route, this.messages, false)
+
+    console.log({ visible: this.visible, _visible: this._visible })
     this.messages.push(...messages)
-    console.log(messages)
+    if (!this.visible) {
+      this.visible = true
+    }
+
+    this.zone.run(() => {
+
+    })
+
+    console.log('Messages', messages)
   }
 
-  public toggleChat() {
+  public toggleChat() { console.log('toggleChat', this.visible)
     this.visible = !this.visible
   }
 
@@ -120,12 +148,13 @@ export class ChatWidgetComponent implements OnInit {
       return
     }
 
+    const route = `/packages/${this._item}/comments`
     const msg = await this.http
-      .post('/packages/290/comments', { comments: message })
+      .post(route, { comments: message })
       .toPromise()
 
     Object.assign(msg, { User: this.user })
-    this.messages.unshift(msg)
+    // this.messages.unshift(msg)
     // this.addMessage(this.client, message, 'sent')
     // setTimeout(() => this.randomMessage(), 1000)
   }

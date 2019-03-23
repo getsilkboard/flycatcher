@@ -5,8 +5,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:demo": "http-server ./dist/elements",
     "build": "ng build --prod",
-    "build:elements": "ng build elements --prod",
+    "build:elements": "ng build elements --prod && node ./build-elements.js",
     "postbuild:elements": "node ./build-elements.js",
     "test": "ng test",
     "lint": "ng lint",
@@ -30,6 +31,7 @@
     "fs-extra": "^5.0.0",
     "rxjs": "6.1.0",
     "rxjs-compat": "^6.0.0",
+    "socket.io-client": "^2.1.1",
     "zone.js": "^0.8.26"
   },
   "devDependencies": {

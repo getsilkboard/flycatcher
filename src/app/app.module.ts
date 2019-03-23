@@ -8,6 +8,11 @@ import { AppComponent } from './app.component'
 import { URLInterceptor } from './_helpers/URLInterceptor'
 
 @NgModule({
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: URLInterceptor, multi: true },
+  ],
+
+@NgModule({
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -15,7 +20,6 @@ import { URLInterceptor } from './_helpers/URLInterceptor'
     ElementModule,
   ],
   declarations: [AppComponent],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: URLInterceptor, multi: true }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

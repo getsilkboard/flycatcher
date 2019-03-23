@@ -1,5 +1,5 @@
 <div class="wrapper {{theme}}">
-  <div class="chat-box" *ngIf="visible" [@fadeInOut]="visible">
+  <div class="chat-box" *ngIf="visible">
     <div class="chat-box-header">
       <div class="">
         <div class="operator-status">
@@ -9,7 +9,8 @@
         </div>
         <chat-avatar [image]="user.avatar"></chat-avatar>
         <h3 class="operator-name">
-          {{user.name}}
+          Angular Chat
+          <!--{{user.name}}-->
         </h3>
       </div>
     </div>
@@ -18,9 +19,9 @@
       <ng-container *ngFor="let message of messages">
          <!--message.type === 'received'-->
         <!-- message.type === 'sent' -->
-        <div class="chat-message" [class.chat-message-received]="true"
+        <div class="chat-message" [class.chat-message-received]="message.User.id !== userid"
              [@fadeIn]
-             [class.chat-message-sent]="false">
+             [class.chat-message-sent]="message.User.id === userid">
           <div >
             <chat-avatar [image]="avatar" class="chat-message-from-avatar"></chat-avatar>
             <div class="chat-message-text">

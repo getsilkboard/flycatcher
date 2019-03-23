@@ -39,9 +39,9 @@ import { st } from '@angular/core/src/render3'
   `],
 })
 export class ChatConfigComponent {
-  @Input() public user: number
-  @Input() public username: string
-  @Input() public token: string
+  @Input() public user: number = localStorage.user
+  @Input() public username: string = localStorage.username
+  @Input() public token: string = localStorage.token
   @Input() public visible: boolean
   @Input() public theme: string
   @Input() public text = 'Select theme'
