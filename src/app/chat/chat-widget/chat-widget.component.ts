@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core'
-import { HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http'
 import { Subject } from 'rxjs'
 import { fadeIn, fadeInOut } from '../animations'
 
@@ -37,7 +37,7 @@ export class ChatWidgetComponent implements OnInit {
 
   public _visible = false
 
-  @Input() public get visible() {
+  public get visible() {
     return this._visible
   }
 
@@ -105,7 +105,7 @@ export class ChatWidgetComponent implements OnInit {
 
   async getMessages() {
     const messages: any = await this.http
-      .get('https://staging-parcel-api.shoppre.com/api/packages/290/comments?access_token=c8018b775429c03a739ec7d76f062d34e78855f4')
+      .get('/packages/290/comments')
       .toPromise()
     this.messages.push(...messages)
     console.log(messages)
@@ -121,12 +121,10 @@ export class ChatWidgetComponent implements OnInit {
     }
 
     const msg = await this.http
-      .post('https://staging-parcel-api.shoppre.com/api/packages/290/comments?access_token=c8018b775429c03a739ec7d76f062d34e78855f4',{
-        comments: message
-      })
+      .post('/packages/290/comments', { comments: message })
       .toPromise()
 
-    Object.assign(msg, { User: this.user });
+    Object.assign(msg, { User: this.user })
     this.messages.unshift(msg)
     // this.addMessage(this.client, message, 'sent')
     // setTimeout(() => this.randomMessage(), 1000)

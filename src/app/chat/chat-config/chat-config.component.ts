@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
+import { st } from '@angular/core/src/render3'
 
 @Component({
   selector: 'chat-config',
@@ -11,6 +12,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
         {{item}}
       </button>
       <button (click)="toggelChat()">Toggle</button>
+      <br>
+      User name: {{username}}
+      <br>
+      User ID: {{user}}
+      <br>
+      Token: {{token}}
     </div>
   `,
   styles: [`
@@ -32,6 +39,9 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
   `],
 })
 export class ChatConfigComponent {
+  @Input() public user: number
+  @Input() public username: string
+  @Input() public token: string
   @Input() public visible: boolean
   @Input() public theme: string
   @Input() public text = 'Select theme'
