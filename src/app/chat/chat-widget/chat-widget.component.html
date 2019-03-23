@@ -3,30 +3,32 @@
     <div class="chat-box-header">
       <div class="">
         <div class="operator-status">
-          {{operator.status}}
+          {{user.status}}
           <span class="operator-status-online">●</span>
           <button class="chat-button-header" (click)="toggleChat()">✕</button>
         </div>
-        <chat-avatar [image]="operator.avatar"></chat-avatar>
+        <chat-avatar [image]="user.avatar"></chat-avatar>
         <h3 class="operator-name">
-          {{operator.name}}
+          {{user.name}}
         </h3>
       </div>
     </div>
     <div class="chat-box-main">
       <div class="chat-message-bottom" #bottom></div>
       <ng-container *ngFor="let message of messages">
-        <div class="chat-message" [class.chat-message-received]="message.type === 'received'"
+         <!--message.type === 'received'-->
+        <!-- message.type === 'sent' -->
+        <div class="chat-message" [class.chat-message-received]="true"
              [@fadeIn]
-             [class.chat-message-sent]="message.type === 'sent'">
+             [class.chat-message-sent]="false">
           <div >
-            <chat-avatar [image]="message.from.avatar" class="chat-message-from-avatar"></chat-avatar>
+            <chat-avatar [image]="avatar" class="chat-message-from-avatar"></chat-avatar>
             <div class="chat-message-text">
-              {{message.text}}
+              {{message.comments}}
             </div>
           </div>
           <div class="chat-message-date">
-            {{message.date | date: 'short'}}
+            {{message.created_at | date: 'short'}}
           </div>
         </div>
       </ng-container>

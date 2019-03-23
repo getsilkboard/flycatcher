@@ -1,4 +1,5 @@
 import { Component, ElementRef, HostListener, Input, OnInit, ViewChild } from '@angular/core'
+import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs'
 import { fadeIn, fadeInOut } from '../animations'
 
@@ -29,12 +30,14 @@ const getRandomMessage = () => randomMessages[rand(randomMessages.length)]
   animations: [fadeInOut, fadeIn],
 })
 export class ChatWidgetComponent implements OnInit {
+
   @ViewChild('bottom') bottom: ElementRef
   @Input() public theme: 'blue' | 'grey' | 'red' = 'blue'
+   // public visible: true | false = false
 
   public _visible = false
 
-  public get visible() {
+  @Input() public get visible() {
     return this._visible
   }
 
@@ -50,8 +53,8 @@ export class ChatWidgetComponent implements OnInit {
 
   public focus = new Subject()
 
-  public operator = {
-    name: 'Operator',
+  public user = {
+    name: 'Swaroop',
     status: 'online',
     avatar: `https://randomuser.me/api/portraits/women/${rand(100)}.jpg`,
   }
@@ -62,8 +65,17 @@ export class ChatWidgetComponent implements OnInit {
     avatar: `https://randomuser.me/api/portraits/men/${rand(100)}.jpg`,
   }
 
+  avatar = `https://randomuser.me/api/portraits/men/55.jpg`
   public messages = []
 
+  ngOnInit() {
+    setTimeout(() => this.visible = true, 1000)
+    // setTimeout(() => {
+    //   this.addMessage(this.operator, 'Hi, how can we help you?', 'received')
+    // }, 1500)
+
+    this.getMessages()
+  }
   public addMessage(from, text, type: 'received' | 'sent') {
     this.messages.unshift({
       from,
@@ -85,26 +97,39 @@ export class ChatWidgetComponent implements OnInit {
   }
 
   public randomMessage() {
-    this.addMessage(this.operator, getRandomMessage(), 'received')
+    this.addMessage(this.user, getRandomMessage(), 'received')
   }
 
-  ngOnInit() {
-    setTimeout(() => this.visible = true, 1000)
-    setTimeout(() => {
-      this.addMessage(this.operator, 'Hi, how can we help you?', 'received')
-    }, 1500)
+  constructor(private http: HttpClient) {
+  }
+
+  async getMessages() {
+    const messages: any = await this.http
+      .get('https://staging-parcel-api.shoppre.com/api/packages/290/comments?access_token=c8018b775429c03a739ec7d76f062d34e78855f4')
+      .toPromise()
+    this.messages.push(...messages)
+    console.log(messages)
   }
 
   public toggleChat() {
     this.visible = !this.visible
   }
 
-  public sendMessage({ message }) {
+  public async sendMessage({ message }) {
     if (message.trim() === '') {
       return
     }
-    this.addMessage(this.client, message, 'sent')
-    setTimeout(() => this.randomMessage(), 1000)
+
+    const msg = await this.http
+      .post('https://staging-parcel-api.shoppre.com/api/packages/290/comments?access_token=c8018b775429c03a739ec7d76f062d34e78855f4',{
+        comments: message
+      })
+      .toPromise()
+
+    Object.assign(msg, { User: this.user });
+    this.messages.unshift(msg)
+    // this.addMessage(this.client, message, 'sent')
+    // setTimeout(() => this.randomMessage(), 1000)
   }
 
   @HostListener('document:keypress', ['$event'])

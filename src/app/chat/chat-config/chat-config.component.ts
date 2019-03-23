@@ -10,6 +10,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
               (click)="setTheme(item)">
         {{item}}
       </button>
+      <button (click)="toggelChat()">Toggle</button>
     </div>
   `,
   styles: [`
@@ -31,11 +32,18 @@ import { Component, EventEmitter, Input, Output } from '@angular/core'
   `],
 })
 export class ChatConfigComponent {
+  @Input() public visible: boolean
   @Input() public theme: string
   @Input() public text = 'Select theme'
   @Output() public themeChange: EventEmitter<any> = new EventEmitter()
+  @Output() public visibleChange: EventEmitter<any> = new EventEmitter()
 
   public themes = ['blue', 'grey', 'red']
+
+  public toggelChat() {
+    this.visibleChange.emit(!this.visible)
+  }
+
   public setTheme(theme) {
     this.theme = theme
     this.themeChange.emit(this.theme)
